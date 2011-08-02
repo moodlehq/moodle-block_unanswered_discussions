@@ -1,0 +1,82 @@
+<?php
+//create a page object for url_get_full()
+$page = page_create_object($this->instance->pagetype, $this->instance->pageid);
+
+$strtitle = array(
+    get_string('randomposts', 'block_unanswered_discussions'),
+    get_string('oldestposts', 'block_unanswered_discussions'),
+    get_string('yourposts', 'block_unanswered_discussions')
+);
+
+?>
+<table cellpadding="9" cellspacing="0" class="blockconfigtable">
+<tr valign="top">
+    <td align="right" width="50%">
+        <?php print_string('blocktitle', 'block_unanswered_discussions'); ?>
+    </td>
+    <td width="50%">
+        <input type="text" name="title" value="<?php echo (isset($this->config) && isset($this->config->title) ? $this->config->title : $this->defaultconfig['title']); ?>" style="width: 100%;" />
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right" width="50%">
+        <?php print_string('show', 'block_unanswered_discussions'); ?>
+    </td>
+    <td width="50%">
+<?php
+    for ($i = 0; $i < 3; $i++) {
+        $enabled = $this->section_enabled($i);
+        $limit = $this->section_limit($i);
+?>
+        <input type="checkbox" name="enabled[<?php echo $i; ?>]" <?php echo ($enabled ? 'checked="checked" ' : ''); ?>onchange="document.getElementById('input_limit_<?php echo $i; ?>').disabled = !this.checked; document.getElementById('input_limit_<?php echo $i; ?>_label').style.color = (!this.checked ? 'grey' : '')" />
+        <input type="text" name="limit[<?php echo $i; ?>]" size="3" value="<?php echo $limit; ?>" id="input_limit_<?php echo $i; ?>"<?php echo (!$enabled ? ' disabled="disabled"' : '');?> />
+        <label for="input_limit_<?php echo $i; ?>" id="input_limit_<?php echo $i; ?>_label"<?php echo (!$enabled ? ' style="font-color: grey;"' : '');?>><?php echo $strtitle[$i]; ?></label>
+        <br />
+<?php } ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right" width="50%">
+        <?php print_string('displayimages', 'block_unanswered_discussions'); ?>
+    </td>
+    <td width="50%">
+        <input type="checkbox" name="show_image" <?php echo (!empty($this->config->show_image) ? 'checked="checked" ' : ''); ?> />
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right" width="50%">
+        <?php print_string('excludefora', 'block_unanswered_discussions'); ?>
+    </td>
+    <td width="50%">
+<?php
+        $forums = get_records('forum', 'course', $this->instance->pageid, 'name ASC');
+
+        if (empty($forums)) {
+            print_string('noforatoexclude', 'block_unanswered_discussions');
+        } else {
+?><select name="exclude[]" multiple="true" style="width: 100%;"><?php
+            foreach ($forums as $forum) {
+?><option value="<?php echo $forum->id; ?>"<?php echo (in_array($forum->id, $this->config->exclude)) ? ' selected="selected"' : ''; ?>><?php echo $forum->name; ?></option><?php
+            }
+
+            if (!empty($options)) {
+?></select><?php
+            }
+        }
+?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right" width="50%">
+        &nbsp;
+    </td>
+    <td width="50%">
+        <span class="confighelp"><?php print_string('excludefora_explain', 'block_unanswered_discussions'); ?></span>
+    </td>
+</tr>
+<tr>
+    <td colspan="2" align="center">
+        <input type="submit" value="<?php print_string('savechanges') ?>">
+    </td>
+</tr>
+</table>
