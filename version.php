@@ -15,4 +15,5 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version = 2007101509;
+$plugin->component = 'block_unanswered_discussions';
+$plugin->version = 2013121000;
